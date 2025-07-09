@@ -1,9 +1,11 @@
-import { ImInstagram } from "react-icons/im"
-import {FastService,TransfertAeroport,TransfertInterville,camelTour,chauffeur,fesTanneries,hassanII,koutoubia,menara,miseDispo} from "../../Assets/assets"
-import { FaFacebook } from "react-icons/fa"
+import React, { useState } from 'react';
+import { Container, Card, Button, Row, Col, Modal, Nav, Navbar,Form } from 'react-bootstrap';
+import { FaMapMarkedAlt, FaPlaneArrival, FaSuitcase } from 'react-icons/fa';
+import { FastService, TransfertAeroport, TransfertInterville, camelTour, chauffeur, fesTanneries, hassanII, koutoubia, menara, miseDispo } from "../../Assets/assets";
+import './styles.css'; 
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok } from 'react-icons/fa';
 
-function Home(){
-    const Produits = [
+const produits = [
         {
             title:"Circuit de 9 jours au départ de Casablanca",
             price: 8612,
@@ -155,106 +157,260 @@ function Home(){
             ]
         }
     ]
-    return(
-        <>
-            <div>
-                {/* header */}
-                <div>
-                    <h1>SIGNATURE TOURS & TRIP</h1>
-                    {/* menu */}
-                    <ul>
-                        <li>Acceuil</li>
-                        <li>Nos Services</li>
-                        <li>Nos vehicules</li>
-                        <li>Contact</li>
-                    </ul>
-                </div>
-                {/* Hero section */}
-                <div>
-                    <h4>CONFIEZ A NOTRE EQUIPE DE PROFESSIONNELS TOUS VOS DEPLACEMENTS. AFIN D'OBTENIR UN DEVIS, N'HESITEZ PAS A CONTACTER NOTRE EQUIPE COMMERCIALE QUI VOUS REPONDRA DANS LES DELAIS LES PLUS BREFS.</h4>
-                    <h5>BIENVENUE CHEZ VOTRE EXPERT DANS LE DOMAINE TOURISTIQUE AU MAROC !</h5>
-                    <p>SIGNATURE TOURS & TRIP, le leader dans le secteur du transport touristique à Casablanca et partout au Maroc, Grace à sa longue expérience et son expertise, il est à votre disposition pour tous vos besoins de mobilité, entreprises, agences de voyages et particuliers.</p>
-                </div>
-                <img src={chauffeur} />
-                <p>RÉSERVEZ VOTRE CHAUFFEUR A CASABLANCA AÉROPORT EN 2 MINUTES</p>
-                <p>Notre Agence de transport touristique  SIGNATURE TOURS & TRIP à Casablanca mis à votre disposition ses véhicules confortables et climatisés pour réaliser votre Transfert Marrakech ou d'autres destinations et plusieurs formules d’Activités, Circuits et Excursions Maroc pour que vous puissiez découvrir les beaux sites et paysages et vivre le charme du tourisme au sud du Maroc.</p>
-                <p>SIGNATURE TOURS & TRIP est spécialiste  de notre Agence de Transport Touristique située à Casablanca et très connue dans le marché du Transport Touristique dans la ville rouge.</p>
-                <p>Service de qualité, Location de Minibus, 4×4 mis à votre disposition et des véhicules climatisés de bonne état et des chauffeurs de haut niveau pour vos Excursions, Circuits et Navettes et vers toutes les destinations du Royaume.</p>
-                <h3>BOUTIQUE</h3>
-                <div>
-                    <div>
-                        <img src={camelTour}/>
-                        <p>CIRCUITS</p>
-                    </div>
-                    <div>
-                        <img src={koutoubia}/>
-                        <p>Visite de ville</p>
-                    </div>
-                </div>
-                <h1>Produits phares</h1>
-                {Produits.map((e)=><div>
-                    <img src={e.image}/>
-                    <p>{e.title}</p>
-                    <p>{e.price}</p>
-                </div>)}
+const ProductCard = ({ produit, onShow }) => (
+  <Col md={4} className="mb-4">
+    <Card className="shadow h-100 border-0 rounded-4 product-card">
+      <Card.Img
+        variant="top"
+        src={produit.image}
+        style={{ height: '220px', objectFit: 'cover' }}
+        className="rounded-top-4"
+      />
+      <Card.Body className="d-flex flex-column justify-content-between">
+        <Card.Title className="fw-bold text-primary">{produit.title}</Card.Title>
+        <Card.Text className="text-muted mb-2">{produit.details.slice(0, 100)}...</Card.Text>
+        <div className="mt-auto d-flex justify-content-between align-items-center">
+          <span className="fw-bold text-danger">{produit.price} MAD</span>
+          <Button variant="outline-primary" size="sm" onClick={() => onShow(produit)}>
+            Show Details
+          </Button>
+        </div>
+      </Card.Body>
+    </Card>
+  </Col>
+);
 
-                <form >
-                    Formulaire de réservation :
-Nom complet *
-Numéro de téléphone *
- -
-E-mail *
-prénom@gmail.com
-Nombre de personnes *
-0
-up arrow
-down arrow
-Lieu d'arrivée *
-Date et heure d'arrivée *
-09/07/2025
+const DetailsModal = ({ show, handleClose, produit }) => {
+  if (!produit) return null;
 
-22
- :
-20
-Lieu départ *
-Date de départ *
+  return (
+    <Modal show={show} onHide={handleClose} size="lg" centered scrollable>
+      <Modal.Header closeButton>
+        <Modal.Title>{produit.title}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p><strong>Description:</strong> {produit.details}</p>
+        {produit.pointsForts && (
+          <>
+            <h5 className="mt-3 text-success">Points Forts:</h5>
+            <ul>{produit.pointsForts.map((point, i) => <li key={i}>{point}</li>)}</ul>
+          </>
+        )}
+        {produit.Circuits && (
+          <>
+            <h5 className="mt-3 text-info">Itinéraire:</h5>
+            <ol>{produit.Circuits.map((c, i) => <li key={i}>{c}</li>)}</ol>
+          </>
+        )}
+        {produit.Inclus && (
+          <>
+            <h5 className="mt-3 text-primary">Inclus:</h5>
+            <ul>{produit.Inclus.map((i, idx) => <li key={idx}>{i}</li>)}</ul>
+          </>
+        )}
+        {produit.Exclus && (
+          <>
+            <h5 className="mt-3 text-danger">Exclus:</h5>
+            <ul>{produit.Exclus.map((e, idx) => <li key={idx}>{e}</li>)}</ul>
+          </>
+        )}
+        {produit.miseaDisposition && (
+          <>
+            <h5 className="mt-3 text-warning">Mise à disposition:</h5>
+            <ul>{produit.miseaDisposition.map((m, i) => <li key={i}>{m}</li>)}</ul>
+          </>
+        )}
+        {produit.NB && <p className="mt-2"><strong>Note:</strong> {produit.NB}</p>}
+      </Modal.Body>
+    </Modal>
+  );
+};
 
-Veuillez sélectionner un jour
+const Hero = () => (
+  <div className="hero-section text-white text-center d-flex align-items-center justify-content-center">
+    <div>
+      <h1 className="display-4 fw-bold">Explore Morocco with Us</h1>
+      <p className="lead">Unforgettable tours, transfers & desert experiences</p>
+    </div>
+  </div>
+);
+const Footer = () => (
+  <footer className="bg-dark text-white py-4 mt-5">
+    <Container className="text-center">
+      <p className="mb-2">© {new Date().getFullYear()} Signature Tours & Trip. Tous droits réservés.</p>
+      <div className="d-flex justify-content-center gap-3 fs-5">
+        <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className="text-white">
+          <FaLinkedinIn />
+        </a>
+        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="text-white">
+          <FaFacebookF />
+        </a>
+        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="text-white">
+          <FaInstagram />
+        </a>
+        <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" className="text-white">
+          <FaTiktok />
+        </a>
+      </div>
+    </Container>
+  </footer>
+);
 
-Veuillez sélectionner un mois
+const ReservationForm = () => {
+  const [formData, setFormData] = useState({
+    nom: "",
+    telephone: "",
+    email: "",
+    personnes: 0,
+    lieuArrivee: "",
+    dateHeureArrivee: "",
+    lieuDepart: "",
+    dateDepart: "",
+    transport: "",
+    vol: "",
+    demandes: "",
+    conditionsAccepted: false
+  });
 
-Veuillez sélectionner une année
-Transport depuis l'aéroport ou le train ? *
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value
+    });
+  };
 
-Arrivée aéroport
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.conditionsAccepted) {
+      alert("Vous devez accepter les conditions générales de vente.");
+      return;
+    }
+    console.log("Réservation envoyée:", formData);
+  };
 
-Départ aéroport
+  return (
+    <Container className="my-5">
+      <h2 className="mb-4 text-center">Formulaire de réservation</h2>
+      <Form onSubmit={handleSubmit}>
+        <Row>
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>Nom complet *</Form.Label>
+              <Form.Control type="text" name="nom" required value={formData.nom} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Numéro de téléphone *</Form.Label>
+              <Form.Control type="tel" name="telephone" required value={formData.telephone} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>E-mail *</Form.Label>
+              <Form.Control type="email" placeholder="prenom@gmail.com" name="email" required value={formData.email} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Nombre de personnes *</Form.Label>
+              <Form.Control type="number" name="personnes" min="0" required value={formData.personnes} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Lieu d'arrivée *</Form.Label>
+              <Form.Control type="text" name="lieuArrivee" required value={formData.lieuArrivee} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Date et heure d'arrivée *</Form.Label>
+              <Form.Control type="datetime-local" name="dateHeureArrivee" required value={formData.dateHeureArrivee} onChange={handleChange} />
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>Lieu départ *</Form.Label>
+              <Form.Control type="text" name="lieuDepart" required value={formData.lieuDepart} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Date de départ *</Form.Label>
+              <Form.Control type="date" name="dateDepart" required value={formData.dateDepart} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Transport depuis l'aéroport ou le train ? *</Form.Label>
+              <Form.Select name="transport" required value={formData.transport} onChange={handleChange}>
+                <option value="">Sélectionner</option>
+                <option value="Arrivée aéroport">Arrivée aéroport</option>
+                <option value="Départ aéroport">Départ aéroport</option>
+                <option value="Mise à disposition">Mise à disposition</option>
+                <option value="Excursion touristique">Excursion touristique</option>
+                <option value="Circuits">Circuits</option>
+                <option value="Autres">Autres</option>
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Numéro de vol</Form.Label>
+              <Form.Control type="text" name="vol" value={formData.vol} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Demandes spéciales</Form.Label>
+              <Form.Control as="textarea" rows={3} name="demandes" value={formData.demandes} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Check
+                type="checkbox"
+                name="conditionsAccepted"
+                label="J'accepte les Conditions Générales de Vente"
+                checked={formData.conditionsAccepted}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <div className="text-center">
+          <Button variant="primary" type="submit">Je réserve !</Button>
+        </div>
+      </Form>
+    </Container>
+  );
+};
 
-Mise à disposition
+const App = () => {
+  const [selected, setSelected] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
-Excursion touristique
+  const handleShow = (prod) => {
+    setSelected(prod);
+    setShowModal(true);
+  };
 
-Circuits
+  const handleClose = () => setShowModal(false);
 
-Autres
-Numéro de vol
-Demandes spéciales
-Conditions Générales de Vente L'établissement se réserve le droit de refuser votre réservation dans le cas où les organismes officiels accrédités ne valideraient pas votre numéro de Carte Bancaire.
+  return (
+    <>
+      <Navbar expand="lg" className="bg-white shadow-sm sticky-top">
+        <Container>
+          <Navbar.Brand href="#" className="fw-bold text-primary">
+            Signature Tours <FaSuitcase className="ms-1" />
+          </Navbar.Brand>
+          <Nav className="ms-auto">
+            <Nav.Link href="#">Home</Nav.Link>
+            <Nav.Link href="#">Tours</Nav.Link>
+            <Nav.Link href="#">Contact</Nav.Link>
+          </Nav>
+        </Container>
+      </Navbar>
 
-La réservation est considérée comme ferme et définitive à compter de la confirmation par Email envoyé . Cette réservation est garantie par votre numéro de carte bancaire. Les arrivées se font de 15h à 00h, les départs à tous moments . Les tarifs du service indiqués sur la réservation sont susceptibles d'être modifiés par l'établissement en fonction la disponibilite. Le paiement du séjour et des prestations annexes est effectué directement à l'établissement, aux conditions que ce dernier exerce dans son établissement.La réservation est garantie aux tarifs et aux conditions indiquées pour cette période. Ces tarifs et conditions sont susceptibles de ne pas être reconduits pour des réservations ultérieures. L'accès à la connexion wifi fait l'objet d'un supplément de prix.
+      <Hero />
 
-Conditions d'annulation. Une réservation peut être annulée au minimum 96 heures à l'avance. Un délai inférieur à 96 heures ou une réservation non annulée, où le client ne se serait pas présenté, donnerait lieu à la facturation du service au tarif indiqué sur la réservation.
+      <Container className="py-5">
+        <h2 className="text-center mb-5">Nos Offres</h2>
+        <Row>
+          {produits.map((produit, idx) => (
+            <ProductCard key={idx} produit={produit} onShow={handleShow} />
+          ))}
+        </Row>
+      </Container>
 
- <button>Je reserve!</button>
-                </form>
-                {/*Footer */}
-                <div>
-                    <ImInstagram/>
-                    <FaFacebook/>
-                </div>
-            </div>
-        </>
-    )
-}
+      <DetailsModal show={showModal} handleClose={handleClose} produit={selected} />
+      <ReservationForm />
+      <Footer />
+    </>
+  );
+};
 
-export default Home
+export default App;
