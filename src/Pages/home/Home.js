@@ -27,11 +27,14 @@ const App = () => {
           <Navbar.Brand href="#" className="fw-bold text-primary">
             Signature Tours <FaSuitcase className="ms-1" />
           </Navbar.Brand>
-          <Nav className="ms-auto">
-            <Nav.Link href="#">Home</Nav.Link>
-            <Nav.Link href="#">Tours</Nav.Link>
-            <Nav.Link href="#">Contact</Nav.Link>
-          </Nav>
+          <Navbar.Toggle aria-controls="navbar-nav" />
+          <Navbar.Collapse id="navbar-nav">
+            <Nav className="ms-auto">
+              <Nav.Link href="#">Home</Nav.Link>
+              <Nav.Link href="#">Tours</Nav.Link>
+              <Nav.Link href="#">Contact</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
         </Container>
       </Navbar>
 
